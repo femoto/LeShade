@@ -364,6 +364,7 @@ class MainWindow(QMainWindow):
             case "game_dir":
                 self.game_directory = value
                 self.game_name = get_game_directory_name(Path(value))
+                self.page_clone.set_game_name(self.game_name)
             case _: print("use a valid 'get'!")
 
     @Slot()

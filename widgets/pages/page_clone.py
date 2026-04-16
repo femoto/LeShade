@@ -21,6 +21,7 @@ class PageClone(QWidget):
 
         self.selections: list[str] = []
         self.is_addon: bool = is_addon_param
+        self.game_name: str = ""
 
         # create layout
         layout = QVBoxLayout()
@@ -101,13 +102,9 @@ class PageClone(QWidget):
                 layout_checkboxes.addWidget(value)
 
         # RenoDX
-        self.renodx_assets: list[str] | None = get_renodx_assets()
+        self.renodx_assets: list[str] | None = None
         self.lbl_renodx = QLabel("RenoDX - Select game addon")
         self.renodx_addon = QComboBox()
-
-        if self.renodx_assets:
-            for asset in self.renodx_assets:
-                self.renodx_addon.addItem(asset)
 
         layout_checkboxes.addSpacing(15)
         layout_checkboxes.addWidget(self.lbl_renodx)
@@ -130,8 +127,49 @@ class PageClone(QWidget):
         layout.addWidget(self.btn_install)
         self.setLayout(layout)
 
+    def update_renodx(self) -> None:
+        if not self.is_addon:
+            self.renodx_addon.addItem("None")
+            self.renodx_addon.setEnabled(False)
+            return
+
+        self.renodx_addon.setEnabled(True)
+
+        if self.renodx_assets is None:
+            self.renodx_assets = get_renodx_assets()
+
+            self.renodx_addon.clear()
+
+            if self.renodx_assets:
+                self.renodx_addon.addItems(self.renodx_assets)
+
+        if self.renodx_assets and self.game_name:
+            self.set_renodx_selector_value(
+                self.game_name,
+                self.renodx_assets,
+                self.renodx_addon
+            )
+
+    def set_renodx_selector_value(self, game_name: str, asset_list: list[str] | None, selector: QComboBox) -> None:
+        if not asset_list or not game_name:
+            return
+
+        first_char: str = game_name[0].lower()
+        pattern: str = "renodx-"
+        pattern_size: int = len(pattern)
+
+        for index, asset in enumerate(asset_list):
+            if asset.startswith(pattern) and len(asset) > pattern_size and asset[pattern_size] == first_char:
+                selector.setCurrentIndex(index)
+                return
+
+    def set_game_name(self, value: str) -> None:
+        self.game_name = value
+        self.update_renodx()
+
     def set_is_addon(self, value: bool) -> None:
         self.is_addon = value
+        self.update_renodx()
         self.update_renodx_selector()
 
     def update_renodx_selector(self) -> None:
