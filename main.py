@@ -196,42 +196,6 @@ class MainWindow(QMainWindow):
             case Pages.CLONE:
                 if self.clone_finished:
                     self.enable_next_button()
-
-                    # Add game to the uninstall list widget
-                    add_game(
-                        self.game_directory,
-                        self.game_exe_path,
-                        self.have_hlsl,
-                        self.game_api_dll,
-                        self.is_vulkan,
-                        self.reshade_prx_dir,
-                        self.system32_prx_dir,
-                        self.vulkanrt_prx_dir
-                    )
-
-                    if self.is_dx8:
-                        self.page_wrapper = PageWrapper(
-                            self.game_name,
-                            DX8_WRAPPER[0],
-                            DX8_WRAPPER[1],
-                            DX8_WRAPPER[2],
-                            DX8_WRAPPER[3],
-                            DX8_WRAPPER[4]
-                        )
-
-                    if self.is_vulkan:
-                        self.page_wrapper = PageWrapper(
-                            self.game_name,
-                            VULKAN_WRAPPER[0],
-                            VULKAN_WRAPPER[1],
-                            VULKAN_WRAPPER[2],
-                            VULKAN_WRAPPER[3],
-                            VULKAN_WRAPPER[4]
-                        )
-
-                    if self.is_dx8 or self.is_vulkan:
-                        self.manage_extra_page(True, self.page_wrapper)
-
             case Pages.WRAPPER:
                 self.enable_next_button()
             case _:
@@ -341,7 +305,44 @@ class MainWindow(QMainWindow):
         match action:
             case "download": self.download_finished = value
             case "install": self.install_finished = value
-            case "clone": self.clone_finished = value
+            case "clone":
+                self.clone_finished = value
+
+                # Add game to the uninstall list widget
+                add_game(
+                    self.game_directory,
+                    self.game_exe_path,
+                    self.have_hlsl,
+                    self.game_api_dll,
+                    self.is_vulkan,
+                    self.reshade_prx_dir,
+                    self.system32_prx_dir,
+                    self.vulkanrt_prx_dir
+                )
+
+                if self.is_dx8:
+                    self.page_wrapper = PageWrapper(
+                        self.game_name,
+                        DX8_WRAPPER[0],
+                        DX8_WRAPPER[1],
+                        DX8_WRAPPER[2],
+                        DX8_WRAPPER[3],
+                        DX8_WRAPPER[4]
+                    )
+
+                if self.is_vulkan:
+                    self.page_wrapper = PageWrapper(
+                        self.game_name,
+                        VULKAN_WRAPPER[0],
+                        VULKAN_WRAPPER[1],
+                        VULKAN_WRAPPER[2],
+                        VULKAN_WRAPPER[3],
+                        VULKAN_WRAPPER[4]
+                    )
+
+                if self.is_dx8 or self.is_vulkan:
+                    self.manage_extra_page(True, self.page_wrapper)
+
             case _: print("use a valid action!")
 
         self.update_buttons()
