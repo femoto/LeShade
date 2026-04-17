@@ -18,6 +18,7 @@ Requires: python
 Requires: python3-pyside6
 Requires: python3-requests
 Requires: python3-certifi
+Requires: protontricks
 
 %description
 %{summary}
