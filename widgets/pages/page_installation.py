@@ -218,7 +218,7 @@ class PageInstallation(QWidget):
 
             if os.path.exists("/.flatpak-info"):
                 wine_native = subprocess.run(
-                    ["flatpak-spawn", "--host", "which", "wine"],
+                    ["flatpak-spawn", "--host", "wine", "--version"],
                     capture_output=True
                 )
 
