@@ -55,7 +55,7 @@ def get_wine_command() -> list[str]:
         else:
             return ["flatpak", "run", "org.winehq.Wine"]
     else:
-        if subprocess.run(["flatpak-spawn", "--host", "which", "wine"], capture_output=True).returncode == 0:
+        if subprocess.run(["flatpak-spawn", "--host", "wine", "--version"], capture_output=True).returncode == 0:
             return ["flatpak-spawn", "--host", "wine"]
         else:
             return ["flatpak-spawn", "--host", "flatpak", "run", "org.winehq.Wine"]
