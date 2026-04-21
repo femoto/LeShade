@@ -65,19 +65,13 @@ class InstallVulkan():
         if remove:
             os.makedirs(EXTRACT_PATH, exist_ok=True)
             self.create_remove_leshade_reg(REMOVE_REG_PATH, remove=True)
-            self.add_remove_registry_keys(
-                self.app_id, REMOVE_REG_PATH, remove=True)
+            self.add_remove_registry_keys(REMOVE_REG_PATH, remove=True)
             return
 
     def run(self) -> None:
         self.run_ICU()
         self.run_vulkanRT()
-
-        if self.is_steam:
-            self.run_reshade_actions(
-                self.reshade_prefix, self.executable_path, self.app_id)
-        else:
-            self.run_reshade_actions(self.reshade_prefix, self.executable_path)
+        self.run_reshade_actions(self.reshade_prefix, self.executable_path)
 
     def download_ICU(self) -> None:
         download(url=ICU_URL, file_name=ICU_PATH)
@@ -189,7 +183,7 @@ class InstallVulkan():
             else:
                 file.write(registry_add_content)
 
-    def add_remove_registry_keys(self, app_id: str, registry_path: str, remove: bool = False) -> None:
+    def add_remove_registry_keys(self, registry_path: str, remove: bool = False) -> None:
         custom_env: dict[str, str] = get_clean_env()
         custom_env["WINEPREFIX"] = os.path.dirname(self.drive_c_path)
         custom_env["WINEDLLOVERRIDES"] = "mscoree,mshtml="
@@ -222,8 +216,8 @@ class InstallVulkan():
             else:
                 raise Exception(f"Failed to write on registry: {e.stderr}")
 
-    def run_reshade_actions(self, reshade_prefix: str, game_executable: Path, app_id: str = "") -> None:
+    def run_reshade_actions(self, reshade_prefix: str, game_executable: Path) -> None:
         self.move_reshade_files(reshade_prefix)
         self.create_reshade_apps(reshade_prefix, game_executable)
         self.create_remove_leshade_reg(ADD_REG_PATH)
-        self.add_remove_registry_keys(app_id, ADD_REG_PATH)
+        self.add_remove_registry_keys(ADD_REG_PATH)
